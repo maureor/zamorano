@@ -1,105 +1,154 @@
 
-# [Next.js Enterprise Boilerplate](https://blazity.com/open-source/nextjs-enterprise-boilerplate) 
+# Zamorano - Next.js Enterprise Boilerplate
 
-A production-ready template for building enterprise applications with Next.js. This boilerplate provides a solid foundation with carefully selected technologies and ready-to-go infrastructure to help you develop high-quality applications efficiently.
+A clean, minimal, but enterprise-grade Next.js codebase ready for a public site + admin backoffice, using ShadCN for UI, API Routes with Zod for the backend, and Prisma for data access.
 
-## Motivation
+## 🚀 Features
 
-While most Next.js boilerplates focus on individual developer needs with excessive complexity, **next-enterprise** prioritizes strategic simplicity for enterprise teams. It offers a streamlined foundation with high-impact features that maximize developer productivity and accelerate time-to-market for business-critical applications.
+- **Next.js 15** with App Router
+- **TypeScript** with strict mode
+- **Tailwind CSS v4** for styling
+- **ShadCN UI** component library
+- **Prisma ORM** with PostgreSQL support
+- **Zod** for input validation and type inference
+- **SWR** for data fetching
+- **ESLint + Prettier** for code quality
+- **Vitest + Playwright** for testing
+- **CI/CD** ready
 
-<a href="https://blazity.com/">
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="/assets/blazity-logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="/assets/blazity-logo-light.svg">
-  <img alt="Logo" align="right" height="80" src="/assets/blazity-logo-light.svg">
-</picture>
-</a>
+## 🏗️ Project Structure
 
-> [!NOTE]
-> **Blazity** is a group of Next.js architects. We help organizations architect, optimize, and deploy high-performance Next.js applications at scale. Contact us at [contact@blazity.com](https://blazity.com) if you’d like to talk about your project.
+```
+zamorano/
+├── app/                    # Next.js App Router
+│   ├── api/               # API Routes
+│   │   ├── health/        # Health check endpoint
+│   │   └── users/         # Users CRUD API
+│   ├── users/             # Users management page
+│   ├── layout.tsx         # Root layout with navigation
+│   └── page.tsx           # Home page
+├── components/             # React components
+│   ├── ui/                # ShadCN UI components
+│   └── navigation.tsx     # Navigation component
+├── lib/                    # Utility libraries
+│   ├── prisma.ts          # Prisma client instance
+│   └── utils.ts           # Utility functions
+├── prisma/                 # Database schema and migrations
+│   └── schema.prisma      # Prisma schema
+└── styles/                 # Global styles
+    └── tailwind.css       # Tailwind CSS configuration
+```
 
+## 🚀 Getting Started
 
+### Prerequisites
 
-## Documentation
+- Node.js 20+ 
+- pnpm package manager
+- PostgreSQL database
 
-There is a separate documentation that explains its functionality, highlights core business values and technical decisions, provides guidelines for future development, and includes architectural diagrams.
+### Installation
 
-We encourage you to [visit our docs (docs.blazity.com)](https://docs.blazity.com) to learn more
+1. Clone the repository:
+```bash
+git clone <your-repo-url>
+cd zamorano
+```
 
-## Integrated features
+2. Install dependencies:
+```bash
+pnpm install
+```
 
-### Boilerplate
-With this template you will get all the boilerplate features included:
+3. Set up environment variables:
+```bash
+cp .env.example .env
+# Edit .env with your database connection string
+```
 
-* [Next.js 15](https://nextjs.org/) - Performance-optimized configuration using App Directory
-* [Tailwind CSS v4](https://tailwindcss.com/) - Utility-first CSS framework for efficient UI development
-* [ESlint 9](https://eslint.org/) and [Prettier](https://prettier.io/) - Code consistency and error prevention
-* [Corepack](https://github.com/nodejs/corepack) & [pnpm](https://pnpm.io/) as the package manager - For project management without compromises 
-* [Strict TypeScript](https://www.typescriptlang.org/) - Enhanced type safety with carefully crafted config and [ts-reset](https://github.com/total-typescript/ts-reset) library
-* [GitHub Actions](https://github.com/features/actions) - Pre-configured workflows including bundle size and performance tracking
-* Perfect Lighthouse score - Optimized performance metrics
-* [Bundle analyzer](https://www.npmjs.com/package/@next/bundle-analyzer) - Monitor and manage bundle size during development
-* Testing suite - [Vitest](https://vitest.dev), [React Testing Library](https://testing-library.com/react), and [Playwright](https://playwright.dev/) for comprehensive testing
-* [Storybook](https://storybook.js.org/) - Component development and documentation
-* Advanced testing - Smoke and acceptance testing capabilities
-* [Conventional commits](https://www.conventionalcommits.org/) - Standardized commit history management
-* [Observability](https://opentelemetry.io/) - Open Telemetry integration
-* [Absolute imports](https://nextjs.org/docs/advanced-features/module-path-aliases) - Simplified import structure
-* [Health checks](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) - Kubernetes-compatible monitoring
-* [Radix UI](https://www.radix-ui.com/) - Headless components for customization
-* [CVA](http://cva.style/) (Class Variance Authority) - Consistent design system creation
-* [Renovate BOT](https://www.whitesourcesoftware.com/free-developer-tools/renovate) - Automated dependency and security updates
-* [Patch-package](https://www.npmjs.com/package/patch-package) - External dependency fixes without compromises
-* Component relationship tools - Graph for managing coupling and cohesion
-* [Semantic Release](https://github.com/semantic-release/semantic-release) - Automated changelog generation
-* [T3 Env](https://env.t3.gg/) - Streamlined environment variable management
+4. Set up the database:
+```bash
+# Generate Prisma client
+pnpm prisma:generate
 
-### Infrastructure & deployments
+# Push schema to database (for development)
+pnpm prisma:db:push
+```
 
-#### Vercel
+5. Start the development server:
+```bash
+pnpm dev
+```
 
-Easily deploy your Next.js app with [Vercel](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=github&utm_campaign=next-enterprise) by clicking the button below:
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-[![Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/Blazity/next-enterprise)
+## 📚 Available Scripts
 
-#### Custom cloud infrastructure
+- `pnpm dev` - Start development server
+- `pnpm build` - Build for production
+- `pnpm start` - Start production server
+- `pnpm lint` - Run ESLint
+- `pnpm test` - Run tests with Vitest
+- `pnpm e2e:headless` - Run Playwright tests
+- `pnpm prisma:generate` - Generate Prisma client
+- `pnpm prisma:db:push` - Push schema to database
 
-**next-enterprise** offers dedicated infrastructure as code (IaC) solutions built with Terraform, designed specifically for deploying Next.js applications based on our extensive experience working with enterprise clients.
+## 🎨 UI Components
 
-Learn more in our [documentation (docs.blazity.com)][docs] how to quickstart with the deployments using simple CLI.
+The project uses ShadCN UI components, which are built on top of Radix UI primitives and styled with Tailwind CSS. Available components include:
 
-#### Available cloud providers and theirs features:
+- Button
+- Card
+- Input
+- Label
 
-* **AWS (Amazon Web Services)**
-  * Automated provisioning of AWS infrastructure
-  * Scalable & secure setup using:
-     * VPC - Isolated network infrastructure
-     * Elastic Container Service (ECS) - Container orchestration
-     * Elastic Container Registry (ECR) - Container image storage
-     * Application Load Balancer - Traffic distribution
-     * S3 + CloudFront - Static asset delivery and caching
-     * AWS WAF - Web Application Firewall protection
-     * Redis Cluster - Caching
-  * CI/CD ready - Continuous integration and deployment pipeline
+To add more components, use:
+```bash
+npx shadcn@latest add <component-name>
+```
 
-*... more coming soon*
+## 🗄️ Database
 
-### Team & maintenance
+The project uses Prisma ORM with PostgreSQL. The current schema includes:
 
-**next-enterprise** is backed and maintained by [Blazity](https://blazity.com), providing up to date security features and integrated feature updates.
+- **User** model with email, name, and timestamps
 
-#### Active maintainers
+To modify the database schema:
+1. Edit `prisma/schema.prisma`
+2. Run `pnpm prisma:generate` to update the client
+3. Run `pnpm prisma:db:push` to apply changes (development) or create migrations for production
 
-- Igor Klepacki ([neg4n](https://github.com/neg4n)) - Open Source Software Developer
-- Tomasz Czechowski ([tomaszczechowski](https://github.com/tomaszczechowski)) - Solutions Architect & DevOps
-- Jakub Jabłoński ([jjablonski-it](https://github.com/jjablonski-it)) - Head of Integrations
+## 🔌 API Endpoints
 
-#### All-time contributors
-[bmstefanski](https://github.com/bmstefanski)
+- `GET /api/health` - Health check
+- `GET /api/users` - Fetch all users
+- `POST /api/users` - Create a new user
 
-## License
+All API endpoints use Zod for input validation and return properly typed responses.
 
-MIT
+## 🧪 Testing
 
+- **Unit Tests**: Vitest for component and utility testing
+- **E2E Tests**: Playwright for end-to-end testing
+- **API Tests**: Test API endpoints with proper validation
 
-[docs]: https://docs.blazity.com/next-enterprise/deployments/enterprise-cli
+## 🚀 Deployment
+
+The project is ready for deployment on Vercel, Netlify, or any other platform that supports Next.js.
+
+### Environment Variables
+
+- `DATABASE_URL` - PostgreSQL connection string
+- `NODE_ENV` - Environment (development/production)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests and linting
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.

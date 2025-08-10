@@ -1,7 +1,7 @@
 import { Metadata } from "next"
-import { Button } from "components/Button/Button"
-
 import { LP_GRID_ITEMS } from "lp-items"
+import { Button } from "../components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card"
 
 export const metadata: Metadata = {
   title: "Zamorano",
@@ -34,15 +34,18 @@ export default function Web() {
               Experience rapid UI development, AI-powered code reviews, and an extensive suite of tools for a smooth and
               enjoyable development process.
             </p>
-            <Button href="https://github.com/Blazity/next-enterprise" className="mr-3">
-              Get started
-            </Button>
-            <Button
-              href="https://vercel.com/new/git/external?repository-url=https://github.com/Blazity/next-enterprise"
-              intent="secondary"
-            >
-              Deploy Now
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild>
+                <a href="https://github.com/Blazity/next-enterprise">
+                  Get started
+                </a>
+              </Button>
+              <Button variant="outline" asChild>
+                <a href="https://vercel.com/new/git/external?repository-url=https://github.com/Blazity/next-enterprise">
+                  Deploy Now
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -50,13 +53,17 @@ export default function Web() {
         <div className="mx-auto max-w-(--breakpoint-xl) px-4 py-8 sm:py-16 lg:px-6">
           <div className="justify-center space-y-8 md:grid md:grid-cols-2 md:gap-12 md:space-y-0 lg:grid-cols-3">
             {LP_GRID_ITEMS.map((singleItem) => (
-              <div key={singleItem.title} className="flex flex-col items-center justify-center text-center">
-                <div className="bg-primary-100 dark:bg-primary-900 mb-4 flex size-10 items-center justify-center rounded-full p-1.5 text-blue-700 lg:size-12">
-                  {singleItem.icon}
-                </div>
-                <h3 className="mb-2 text-xl font-bold dark:text-white">{singleItem.title}</h3>
-                <p className="text-gray-500 dark:text-gray-400">{singleItem.description}</p>
-              </div>
+              <Card key={singleItem.title} className="text-center">
+                <CardHeader>
+                  <div className="bg-primary-100 dark:bg-primary-900 mb-4 flex size-10 items-center justify-center rounded-full p-1.5 text-blue-700 lg:size-12 mx-auto">
+                    {singleItem.icon}
+                  </div>
+                  <CardTitle className="text-xl">{singleItem.title}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription>{singleItem.description}</CardDescription>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
