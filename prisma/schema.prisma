@@ -10,12 +10,96 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  EDITOR
+  USER // Podrías necesitar este rol si en el futuro hay usuarios que no son administradores
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
+  id        String      @id @default(uuid())
+  name      String
+  email     String      @unique
+  password  String
+  role      Role        @default(USER)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  logs      LogCambio[]
+
+  @@map("users")
+}
+
+model Viaje {
+  id             String         @id @default(uuid())
+  title          String
+  description    String
+  flyer          String? // URL de la imagen/flyer
+  category       String // Ej: "Paquetes en bus", "Cruceros"
+  status         String         @default("draft") // Ej: "draft", "published", "archived"
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  fechasSalida   FechaSalida[]
+  testimonios    Testimonio[]
+
+  @@map("viajes")
+}
+
+model FechaSalida {
+  id             String   @id @default(uuid())
+  date           DateTime @db.Date // Solo la fecha, sin hora
+  price          Float
+  disponibilidad Int      @default(0)
+  viajeId        String
+  viaje          Viaje    @relation(fields: [viajeId], references: [id], onDelete: Cascade)
+
+  @@map("fechas_salida")
+}
+
+model Testimonio {
+  id        String    @id @default(uuid())
+  author    String
+  text      String
+  viajeId   String?
+  viaje     Viaje?    @relation(fields: [viajeId], references: [id], onDelete: SetNull)
+  visible   Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("testimonios")
+}
+
+model Novedad {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  image     String? // URL de la imagen de la novedad
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("users")
-} 
+  @@map("novedades")
+}
+
+model Popup {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  image     String? // URL de la imagen del popup
+  active    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("popups")
+}
+
+model LogCambio {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entity      String // Nombre de la entidad modificada (ej: "Viaje", "Testimonio")
+  field       String // Campo modificado
+  oldValue    String? // Valor anterior (puede ser nulo si es una creación)
+  newValue    String? // Nuevo valor (puede ser nulo si es una eliminación)
+  timestamp   DateTime @default(now())
+
+  @@map("log_cambios")
+}
