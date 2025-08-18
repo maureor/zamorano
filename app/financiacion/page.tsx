@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { CreditCard, Calculator, CheckCircle, DollarSign, Calendar, Percent, Shield, Users } from "lucide-react"
+import { Calculator, Calendar, CheckCircle, CreditCard, DollarSign, Percent, Shield, Users } from "lucide-react"
 
 const financingOptions = [
   {

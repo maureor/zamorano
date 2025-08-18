@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Star, Quote } from "lucide-react"
+import { Quote, Star } from "lucide-react"
 import Image from "next/image"
 
 const testimonials = [
@@ -81,7 +81,7 @@ export function TestimonialsSection() {
         <div className="text-center mt-12">
           <div className="inline-flex items-center gap-2 bg-gray-800 px-6 py-3 rounded-full">
             <Star className="h-5 w-5 text-yellow-400 fill-current" />
-            <span className="text-lg font-semibold">4.9/5</span>
+            <span className="text-lg font-semibold">4/5</span>
             <span className="text-gray-400">• +500 reseñas verificadas</span>
           </div>
         </div>

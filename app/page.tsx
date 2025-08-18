@@ -19,7 +19,10 @@ export default function HomePage() {
         <TripCategories />
         <WhyChooseUs />
         <TestimonialsSection />
-        <NewsSection />
+        {/* Ocultar NewsSection en móvil para mejor UX */}
+        <div className="hidden md:block">
+          <NewsSection />
+        </div>
         <ContactSection />
       </main>
       <Footer />

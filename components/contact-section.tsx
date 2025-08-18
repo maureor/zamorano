@@ -2,14 +2,14 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Phone, Mail, MessageCircle, Clock } from "lucide-react"
+import { Clock, Mail, MessageCircle, Phone } from "lucide-react"
 
 export function ContactSection() {
   return (
-    <section className="py-16 bg-gradient-to-r from-purple-600 to-purple-700 text-white pb-0">
+    <section className="py-16 bg-gradient-to-r from-purple-600 to-purple-700 text-white pb-0 relative overflow-hidden">
       {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-cyan-400 to-green-400 transform rotate-12 scale-150"></div>
+      <div className="absolute inset-0 opacity-10 overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-cyan-400 to-green-400 transform rotate-12 scale-125"></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -27,7 +27,7 @@ export function ContactSection() {
                 <Phone className="h-6 w-6 text-purple-600" />
               </div>
               <h3 className="font-semibold mb-2">Teléfono</h3>
-              <p className="text-purple-100">+54 11 4567-8900</p>
+              <p className="text-purple-100">+54 9 223 493-3500</p>
             </CardContent>
           </Card>
 
@@ -37,7 +37,7 @@ export function ContactSection() {
                 <MessageCircle className="h-6 w-6 text-purple-600" />
               </div>
               <h3 className="font-semibold mb-2">WhatsApp</h3>
-              <p className="text-purple-100">+54 9 11 1234-5678</p>
+              <p className="text-purple-100">2234933500</p>
             </CardContent>
           </Card>
 
@@ -57,7 +57,8 @@ export function ContactSection() {
                 <Clock className="h-6 w-6 text-purple-600" />
               </div>
               <h3 className="font-semibold mb-2">Horarios</h3>
-              <p className="text-purple-100">Lun-Vie 9-18hs</p>
+              <p className="text-purple-100">Lun a Vie de 9:00 a 17:00hs</p>
+              <p className="text-purple-100">Sábados de 9:00 a 12:00hs</p>
             </CardContent>
           </Card>
         </div>

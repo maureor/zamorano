@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Shield, Clock, Award, HeartHandshake, Phone, Star } from "lucide-react"
+import { Award, Clock, HeartHandshake, Phone, Shield, Star } from "lucide-react"
 
 const features = [
   {
@@ -11,7 +11,7 @@ const features = [
   },
   {
     icon: Award,
-    title: "25 Años de Experiencia",
+    title: "+20 Años de Experiencia",
     description: "Más de dos décadas organizando viajes inolvidables",
   },
   {

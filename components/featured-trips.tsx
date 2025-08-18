@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, MapPin, Users, Clock, Heart } from "lucide-react"
+import { Calendar, Clock, Heart, MapPin, Users } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -55,7 +55,7 @@ const featuredTrips = [
 
 export function FeaturedTrips() {
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white">
+    <section id="featured-trips" className="py-16 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <Badge className="mb-4 bg-gradient-to-r from-cyan-400 to-green-400 text-gray-900 hover:from-cyan-500 hover:to-green-500">
