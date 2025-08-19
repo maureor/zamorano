@@ -93,7 +93,7 @@ export function HeroSection() {
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 sm:mb-10 md:mb-12 lg:mb-16 leading-tight px-2">
             <WordRotate 
-              words={["Descubrí", "Conoce", "Viaja", "Recorré", "Explorá"]} 
+              words={["Descubri", "Conoce", "Viaja", "Recorre", "Explora"]} 
               duration={3000}
               className="text-white"
               motionProps={{
