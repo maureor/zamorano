@@ -4,8 +4,10 @@ import { useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { X } from "lucide-react"
 import Image from "next/image"
+import { useWhatsApp } from "@/lib/use-whatsapp"
 
 export function WhatsAppFloat() {
+  const { openWhatsApp, message } = useWhatsApp()
   const [isVisible, setIsVisible] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
   const modalRef = useRef<HTMLDivElement>(null)
@@ -44,10 +46,7 @@ export function WhatsAppFloat() {
   }, [isExpanded])
 
   const handleWhatsAppClick = () => {
-    const phoneNumber = "5492234933500" // Número de WhatsApp de Zamorano Viajes
-    const message = "¡Hola! Me interesa conocer más sobre sus viajes. ¿Podrían ayudarme?"
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, "_blank")
+    openWhatsApp()
   }
 
   if (!isVisible) return null
@@ -80,7 +79,7 @@ export function WhatsAppFloat() {
             </Button>
           </div>
 
-          <p className="text-sm text-gray-600 mb-3">¡Hola! 👋 ¿En qué podemos ayudarte con tu próximo viaje?</p>
+          <p className="text-sm text-gray-600 mb-3">{message}</p>
 
           <Button
             onClick={handleWhatsAppClick}

@@ -5,8 +5,11 @@ import { Badge } from "@/components/ui/badge"
 import { MapPin, Star, Users } from "lucide-react"
 import Image from "next/image"
 import { useEffect, useRef } from "react"
+import { useWhatsApp } from "@/lib/use-whatsapp"
+import { WordRotate } from "@/components/magicui/word-rotate"
 
 export function HeroSection() {
+  const { openWhatsApp } = useWhatsApp()
   const heroRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -89,8 +92,18 @@ export function HeroSection() {
           </Badge>
 
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-8 sm:mb-10 md:mb-12 lg:mb-16 leading-tight px-2">
-            Descubrí el mundo
-            <span className="block text-purple-300 mt-2 sm:mt-3 md:mt-4">con nosotros</span>
+            <WordRotate 
+              words={["Descubrí", "Conoce", "Viaja", "Recorré", "Explorá"]} 
+              duration={3000}
+              className="text-white"
+              motionProps={{
+                initial: { opacity: 0, y: -20 },
+                animate: { opacity: 1, y: 0 },
+                exit: { opacity: 0, y: 20 },
+                transition: { duration: 0.5, ease: "easeOut" }
+              }}
+            />
+            <span className="block text-purple-300 mt-2 sm:mt-3 md:mt-4">el mundo con nosotros</span>
           </h1>
 
           <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-10 sm:mb-12 md:mb-16 lg:mb-20 max-w-2xl md:max-w-3xl mx-auto leading-relaxed text-gray-200 px-4">
@@ -125,6 +138,7 @@ export function HeroSection() {
               size="lg"
               variant="outline"
               className="border-2 border-cyan-300 text-cyan-300 hover:bg-cyan-300 hover:text-gray-900 px-4 md:px-6 lg:px-8 py-2 md:py-3 lg:py-4 text-sm md:text-base lg:text-lg font-semibold rounded-full bg-transparent w-full sm:w-auto"
+              onClick={openWhatsApp}
             >
               Consultá por WhatsApp
             </Button>

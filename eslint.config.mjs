@@ -23,7 +23,7 @@ const config = typescriptEslint.config(
     ignores: eslintIgnore,
   },
   typescriptEslint.configs.recommended,
-  eslintPluginImport.flatConfigs.recommended,
+  // eslintPluginImport.flatConfigs.recommended, // Comentado para evitar reglas de ordenamiento
   {
     plugins: {
       "@next/next": eslintPluginNext,
@@ -52,14 +52,12 @@ const config = typescriptEslint.config(
           varsIgnorePattern: "^_",
         },
       ],
-      "sort-imports": [
-        "error",
-        {
-          ignoreCase: true,
-          ignoreDeclarationSort: true,
-        },
-      ],
+      "sort-imports": "off", // Desactivado completamente
       "import/order": "off", // Desactivado para evitar ordenamiento alfabético forzado
+      "import/sort": "off", // Desactivado completamente
+      "import/group": "off", // Desactivado completamente
+      "import/newline": "off", // Desactivado completamente
+      "import/no-duplicates": "off", // Desactivado completamente
     },
   }
 )

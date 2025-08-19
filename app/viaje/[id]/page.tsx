@@ -489,7 +489,7 @@ export default function TripDetailPage() {
                         </div>
                         <div className="flex items-center gap-2 text-sm text-gray-600">
                           <Award className="h-4 w-4 text-yellow-500" />
-                          <span>25 años de experiencia</span>
+                          <span>+20 años de experiencia</span>
                         </div>
                       </div>
                     </div>

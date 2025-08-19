@@ -1,3 +1,5 @@
+"use client"
+
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
@@ -8,6 +10,7 @@ import { Calendar, MapPin, Users, Clock, Heart, Filter, Search } from "lucide-re
 import { Input } from "@/components/ui/input"
 import Image from "next/image"
 import Link from "next/link"
+import { useWhatsApp } from "@/lib/use-whatsapp"
 
 const busPackages = [
   {
@@ -93,6 +96,8 @@ const busPackages = [
 ]
 
 export default function PaquetesBusPage() {
+  const { openWhatsApp } = useWhatsApp()
+  
   return (
     <>
       <Header />
@@ -114,6 +119,7 @@ export default function PaquetesBusPage() {
                   size="lg"
                   variant="outline"
                   className="border-cyan-300 text-cyan-300 hover:bg-cyan-300 hover:text-gray-900 bg-transparent"
+                  onClick={openWhatsApp}
                 >
                   Consultá por WhatsApp
                 </Button>

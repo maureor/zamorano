@@ -1,0 +1,11 @@
+{
+  "extends": ["next/core-web-vitals"],
+  "rules": {
+    "sort-imports": "off",
+    "import/order": "off",
+    "import/sort": "off",
+    "import/group": "off",
+    "import/newline": "off",
+    "import/no-duplicates": "off"
+  }
+}

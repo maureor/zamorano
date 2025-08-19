@@ -180,3 +180,8 @@
     }
   }
 }
+
+/* Clase para el logo de WhatsApp con color púrpura */
+.whatsapp-logo-purple {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(246deg) brightness(104%) contrast(97%);
+}
