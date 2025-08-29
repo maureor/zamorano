@@ -35,16 +35,17 @@ export function WordRotate({
   }, [words, duration]);
 
   return (
-    <div className="overflow-hidden py-2">
+    <span className="inline-block overflow-hidden align-baseline">
       <AnimatePresence mode="wait">
-        <motion.h1
+        <motion.span
           key={words[index]}
           className={cn(className)}
+          style={{ display: 'inline-block', willChange: 'transform' }}
           {...motionProps}
         >
           {words[index]}
-        </motion.h1>
+        </motion.span>
       </AnimatePresence>
-    </div>
+    </span>
   );
 }
