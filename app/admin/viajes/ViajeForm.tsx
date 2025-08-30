@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { SideWindow } from "@/components/ui/side-window"
+import { ESizes } from "@/components/ui/sheet"
 import { ViajeFormSkeleton } from "../components/skeletons"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -168,7 +169,8 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
       title="Crear Nuevo Viaje"
       open={open}
       onOpenChange={onOpenChange}
-            >
+      primary
+    >
           {formLoading || isRefreshing ? (
             <ViajeFormSkeleton />
           ) : (

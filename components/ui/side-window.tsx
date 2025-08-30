@@ -16,6 +16,9 @@ interface SideWindowProps {
   children: React.ReactNode
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  primary?: boolean
+  secondary?: boolean
+  tertiary?: boolean
 }
 
 export function SideWindow({
@@ -24,13 +27,21 @@ export function SideWindow({
   children,
   open,
   onOpenChange,
+  primary,
+  secondary,
+  tertiary,
 }: SideWindowProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
         {trigger}
       </SheetTrigger>
-      <SheetContent className="p-0 flex flex-col">
+      <SheetContent 
+        className="p-0 flex flex-col" 
+        primary={primary}
+        secondary={secondary}
+        tertiary={tertiary}
+      >
         {/* Header fijo */}
         <div className="flex-shrink-0 bg-background border-b relative">
           <div className="flex items-center h-14 px-4 pl-24">
