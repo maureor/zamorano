@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { 
   getUserPreferences, 
   saveUserPreferences, 
@@ -87,7 +87,8 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     })
   }, [])
 
-  const value: PreferencesContextType = {
+  // Memoizar el valor del contexto para evitar re-renders infinitos
+  const value: PreferencesContextType = React.useMemo(() => ({
     preferences,
     updatePreference,
     updatePreferences,
@@ -95,7 +96,7 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     toggleSidebar,
     setSidebarCollapsed,
     sidebarCollapsed: preferences.sidebar.collapsed
-  }
+  }), [preferences, updatePreference, updatePreferences, resetPreferences, toggleSidebar, setSidebarCollapsed])
 
   return (
     <PreferencesContext.Provider value={value}>

@@ -8,11 +8,13 @@ import { NewsSection } from "@/components/news-section"
 import { ContactSection } from "@/components/contact-section"
 import { Footer } from "@/components/footer"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
+import { PromotionalBanner } from "@/components/promotional-banner"
 
 export default function HomePage() {
   return (
     <>
       <Header />
+      <PromotionalBanner />
       <main className="min-h-screen">
         <HeroSection />
         <FeaturedTrips />
