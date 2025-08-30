@@ -8,6 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { RefreshButton } from "@/components/ui/refresh-button"
 
 interface SideWindowProps {
   trigger: React.ReactNode
@@ -29,14 +30,20 @@ export function SideWindow({
       <SheetTrigger asChild>
         {trigger}
       </SheetTrigger>
-      <SheetContent className="overflow-y-auto p-0">
-        <div className="sticky top-0 z-10 bg-background border-b">
+      <SheetContent className="p-0 flex flex-col">
+        {/* Header fijo */}
+        <div className="flex-shrink-0 bg-background border-b relative">
           <div className="flex items-center h-14 px-4 pl-24">
             <SheetTitle className="text-lg font-semibold">{title}</SheetTitle>
           </div>
+          {/* RefreshButton posicionado junto al botón X */}
+          <div className="absolute top-2 left-12 z-20">
+            <RefreshButton />
+          </div>
         </div>
         
-        <div className="px-6 py-6">
+        {/* Contenido con scroll */}
+        <div className="flex-1 overflow-y-auto px-6 py-6">
           {children}
         </div>
       </SheetContent>
