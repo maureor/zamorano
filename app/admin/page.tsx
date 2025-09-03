@@ -246,14 +246,58 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-8 min-w-0 overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-        <div className="flex items-center gap-4 min-w-0">
-          <RefreshButton size="default" className="mt-1 flex-shrink-0" />
-          <div className="min-w-0 flex-1">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">Dashboard</h1>
-            <p className="text-muted-foreground text-sm sm:text-base break-words">
-              Bienvenido al panel de administración de Zamorano Turismo
-            </p>
+      <div className="relative">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-r from-slate-50 via-blue-50 to-indigo-50 rounded-2xl opacity-50"></div>
+        
+        <div className="relative flex flex-col lg:flex-row lg:items-center gap-6">
+          <div className="flex items-start gap-4 min-w-0">
+            <div className="flex-shrink-0">
+              <RefreshButton size="default" className="mt-1" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-4 mb-3">
+                <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+                  Dashboard
+                </h1>
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-white/80 backdrop-blur-sm rounded-full border border-green-200 shadow-sm">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-semibold text-green-700">Sistema Activo</span>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                  <p className="text-slate-600 text-base">
+                    ¡Hola <span className="font-semibold text-slate-900">Walter</span>! 👋
+                  </p>
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <Calendar className="h-4 w-4" />
+                    <span className="font-medium">
+                      {new Date().toLocaleDateString('es-ES', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4 lg:ml-auto">
+            <div className="hidden lg:flex items-center gap-3 px-4 py-2.5 bg-white/80 backdrop-blur-sm rounded-xl border border-slate-200 shadow-sm">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+              <div className="text-sm">
+                <div className="font-semibold text-slate-900">Última actualización</div>
+                <div className="text-slate-500">{new Date().toLocaleTimeString('es-ES', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -261,20 +305,20 @@ export default function AdminDashboard() {
       {/* Stats Cards */}
       {contentSkeleton ? contentSkeleton : (
       <>
-      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {dashboardData.stats.map((stat) => (
           <Card key={stat.title} className="min-w-0">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2">
-              <CardTitle className="text-xs sm:text-sm font-medium truncate pr-1 sm:pr-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
                 {stat.title}
               </CardTitle>
-              <div className={`p-1 sm:p-2 rounded-lg ${stat.bgColor} flex-shrink-0`}>
-                <stat.icon className={`h-3 w-3 sm:h-4 sm:w-4 ${stat.color}`} />
+              <div className={`p-2 rounded-lg ${stat.bgColor} flex-shrink-0`}>
+                <stat.icon className={`h-4 w-4 ${stat.color}`} />
               </div>
             </CardHeader>
-            <CardContent className="pt-0 sm:pt-0">
-              <div className="text-lg sm:text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground break-words hidden sm:block">
+            <CardContent className="pt-0">
+              <div className="text-2xl font-bold">{stat.value}</div>
+              <p className="text-sm text-muted-foreground break-words">
                 {stat.description}
               </p>
             </CardContent>
