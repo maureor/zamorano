@@ -12,16 +12,16 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { SideWindow } from "@/components/ui/side-window"
-import { ESizes } from "@/components/ui/sheet"
+
 import { ViajeFormSkeleton } from "../components/skeletons"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { 
   Plus, 
-  Calendar,
-  DollarSign,
   Save,
-  Upload
+  Upload,
+  Image as ImageIcon,
+  X
 } from 'lucide-react'
 
 interface ViajeFormProps {
@@ -38,18 +38,21 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
     titulo: '',
     descripcion: '',
     categoria: '',
-    precio_base: '',
-    duracion: '',
     destino: '',
-    imagen: null as File | null,
+    imagen_principal: null as File | null,
+    video_url: '',
+    destacado: false,
   })
   
-  const [fechasSalida, setFechasSalida] = useState([
-    { fecha: '', precio: '', disponible: true }
-  ])
+
   
-  const [inclusiones, setInclusiones] = useState([''])
-  const [exclusiones, setExclusiones] = useState([''])
+
+  const [galeriaImagenes, setGaleriaImagenes] = useState<File[]>([])
+  const [testimoniosAsociados, setTestimoniosAsociados] = useState<string[]>([])
+  
+
+  
+
 
   // Simular carga inicial del formulario
   useEffect(() => {
@@ -88,8 +91,8 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
     setLoading(true)
     
     try {
-      // Aquí iría la lógica para guardar el viaje
-      console.log('Guardando viaje:', { formData, fechasSalida, inclusiones, exclusiones })
+      // Aquí iría la lógica para guardar el destino
+      console.log('Guardando destino:', { formData })
       
       // Simular delay de API
       await new Promise(resolve => setTimeout(resolve, 2000))
@@ -99,14 +102,16 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
         titulo: '',
         descripcion: '',
         categoria: '',
-        precio_base: '',
-        duracion: '',
         destino: '',
-        imagen: null,
+        imagen_principal: null,
+        video_url: '',
+        destacado: false,
       })
-      setFechasSalida([{ fecha: '', precio: '', disponible: true }])
-      setInclusiones([''])
-      setExclusiones([''])
+
+
+      setGaleriaImagenes([])
+      setTestimoniosAsociados([])
+
       
       onOpenChange(false)
     } catch (error) {
@@ -116,46 +121,42 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
     }
   }
 
-  const addFechaSalida = () => {
-    setFechasSalida([...fechasSalida, { fecha: '', precio: '', disponible: true }])
+
+
+
+
+  // Funciones para galería de imágenes
+  const handleGaleriaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    const totalImagenes = galeriaImagenes.length + files.length
+    
+    if (totalImagenes > 5) {
+      alert('Máximo 5 imágenes permitidas')
+      return
+    }
+    
+    setGaleriaImagenes([...galeriaImagenes, ...files])
   }
 
-  const removeFechaSalida = (index: number) => {
-    setFechasSalida(fechasSalida.filter((_, i) => i !== index))
+  const removeImagenGaleria = (index: number) => {
+    setGaleriaImagenes(galeriaImagenes.filter((_, i) => i !== index))
   }
 
-  const updateFechaSalida = (index: number, field: string, value: string | boolean) => {
-    const updated = [...fechasSalida]
-    updated[index] = { ...updated[index], [field]: value } as any // eslint-disable-line @typescript-eslint/no-explicit-any
-    setFechasSalida(updated)
+  const moveImagen = (fromIndex: number, toIndex: number) => {
+    const newImagenes = [...galeriaImagenes]
+    const [movedImagen] = newImagenes.splice(fromIndex, 1)
+    if (movedImagen) {
+      newImagenes.splice(toIndex, 0, movedImagen)
+      setGaleriaImagenes(newImagenes)
+    }
   }
 
-  const addInclusion = () => {
-    setInclusiones([...inclusiones, ''])
-  }
 
-  const removeInclusion = (index: number) => {
-    setInclusiones(inclusiones.filter((_, i) => i !== index))
-  }
 
-  const updateInclusion = (index: number, value: string) => {
-    const updated = [...inclusiones]
-    updated[index] = value
-    setInclusiones(updated)
-  }
+  // Funciones para testimonios
 
-  const addExclusion = () => {
-    setExclusiones([...exclusiones, ''])
-  }
-
-  const removeExclusion = (index: number) => {
-    setExclusiones(exclusiones.filter((_, i) => i !== index))
-  }
-
-  const updateExclusion = (index: number, value: string) => {
-    const updated = [...exclusiones]
-    updated[index] = value
-    setExclusiones(updated)
+  const removeTestimonio = (testimonioId: string) => {
+    setTestimoniosAsociados(testimoniosAsociados.filter(id => id !== testimonioId))
   }
 
   return (
@@ -163,10 +164,10 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
       trigger={
         <Button variant="brand">
           <Plus className="h-4 w-4 mr-2" />
-          Nuevo Viaje
+          Nuevo Destino
         </Button>
       }
-      title="Crear Nuevo Viaje"
+      title="Crear Nuevo Destino"
       open={open}
       onOpenChange={onOpenChange}
       primary
@@ -181,10 +182,10 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
           
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="titulo">Título del Viaje</Label>
+              <Label htmlFor="titulo">Título del Destino</Label>
               <Input
                 id="titulo"
-                placeholder="Ej: Aventura en Patagonia"
+                placeholder="Ej: Mendoza - Ruta del Vino"
                 value={formData.titulo}
                 onChange={(e) => setFormData({...formData, titulo: e.target.value})}
                 required
@@ -201,11 +202,10 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
                   <SelectValue placeholder="Seleccionar categoría" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="aventura">Aventura</SelectItem>
-                  <SelectItem value="cultural">Cultural</SelectItem>
-                  <SelectItem value="relax">Relax</SelectItem>
-                  <SelectItem value="gastronomico">Gastronómico</SelectItem>
-                  <SelectItem value="naturaleza">Naturaleza</SelectItem>
+                  <SelectItem value="bus">Paquetes en Bus</SelectItem>
+                  <SelectItem value="aereos">Paquetes Aéreos</SelectItem>
+                  <SelectItem value="cruceros">Cruceros</SelectItem>
+                  <SelectItem value="servicios-terrestres">Servicios Terrestres</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -223,27 +223,22 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="duracion">Duración</Label>
-              <Input
-                id="duracion"
-                placeholder="Ej: 5 días / 4 noches"
-                value={formData.duracion}
-                onChange={(e) => setFormData({...formData, duracion: e.target.value})}
-                required
-              />
-            </div>
+
             
-            <div className="space-y-2">
-              <Label htmlFor="precio_base">Precio Base (USD)</Label>
-              <Input
-                id="precio_base"
-                type="number"
-                placeholder="1200"
-                value={formData.precio_base}
-                onChange={(e) => setFormData({...formData, precio_base: e.target.value})}
-                required
+
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="destacado">Destacado</Label>
+            <div className="flex items-center space-x-2 pt-2">
+              <input
+                type="checkbox"
+                id="destacado"
+                checked={formData.destacado}
+                onChange={(e) => setFormData({...formData, destacado: e.target.checked})}
+                className="h-4 w-4 rounded border-gray-300"
               />
+              <Label htmlFor="destacado">Mostrar como destacado</Label>
             </div>
           </div>
 
@@ -251,7 +246,7 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
             <Label htmlFor="descripcion">Descripción</Label>
             <Textarea
               id="descripcion"
-              placeholder="Describe el viaje, actividades, lugares a visitar..."
+              placeholder="Describe el destino, actividades, lugares a visitar..."
               rows={4}
               value={formData.descripcion}
               onChange={(e) => setFormData({...formData, descripcion: e.target.value})}
@@ -259,151 +254,161 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="imagen">Imagen Principal</Label>
-            <div className="flex items-center gap-4">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="imagen_principal">Imagen Principal</Label>
+              <div className="flex items-center gap-4">
+                <Input
+                  id="imagen_principal"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0]
+                    if (file) {
+                      setFormData({...formData, imagen_principal: file})
+                    }
+                  }}
+                />
+                <Button type="button" variant="outline" size="sm">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Subir
+                </Button>
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="video_url">URL del Video (opcional)</Label>
               <Input
-                id="imagen"
-                type="file"
-                accept="image/*"
-                onChange={(e) => setFormData({...formData, imagen: e.target.files?.[0] || null})}
+                id="video_url"
+                type="url"
+                placeholder="https://youtube.com/watch?v=..."
+                value={formData.video_url}
+                onChange={(e) => setFormData({...formData, video_url: e.target.value})}
               />
-              <Button type="button" variant="outline" size="sm">
-                <Upload className="h-4 w-4 mr-2" />
-                Subir
-              </Button>
             </div>
           </div>
         </div>
 
-        {/* Fechas de salida */}
+
+
+
+
+        {/* Galería de imágenes */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Fechas de Salida</h3>
-            <Button type="button" variant="outline" size="sm" onClick={addFechaSalida}>
-              <Calendar className="h-4 w-4 mr-2" />
-              Agregar Fecha
-            </Button>
+            <h3 className="text-lg font-semibold">Galería de Imágenes</h3>
+            <div className="flex items-center gap-2">
+              <Input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleGaleriaChange}
+                className="hidden"
+                id="galeria-input"
+                disabled={galeriaImagenes.length >= 5}
+              />
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                onClick={() => document.getElementById('galeria-input')?.click()}
+                disabled={galeriaImagenes.length >= 5}
+              >
+                <ImageIcon className="h-4 w-4 mr-2" />
+                Agregar Imágenes ({galeriaImagenes.length}/5)
+              </Button>
+            </div>
           </div>
           
-          <div className="space-y-3">
-            {fechasSalida.map((fecha, index) => (
-              <div key={index} className="flex items-center gap-4 p-4 border rounded-lg">
-                <div className="flex-1">
-                  <Label htmlFor={`fecha-${index}`}>Fecha</Label>
-                  <Input
-                    id={`fecha-${index}`}
-                    type="date"
-                    value={fecha.fecha}
-                    onChange={(e) => updateFechaSalida(index, 'fecha', e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <div className="flex-1">
-                  <Label htmlFor={`precio-${index}`}>Precio (USD)</Label>
-                  <Input
-                    id={`precio-${index}`}
-                    type="number"
-                    placeholder="1200"
-                    value={fecha.precio}
-                    onChange={(e) => updateFechaSalida(index, 'precio', e.target.value)}
-                    required
-                  />
-                </div>
-                
-                <div className="flex items-center space-x-2 pt-6">
-                  <input
-                    type="checkbox"
-                    id={`disponible-${index}`}
-                    checked={fecha.disponible}
-                    onChange={(e) => updateFechaSalida(index, 'disponible', e.target.checked)}
-                    className="h-4 w-4 rounded border-gray-300"
-                  />
-                  <Label htmlFor={`disponible-${index}`}>Disponible</Label>
-                </div>
-                
-                {fechasSalida.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeFechaSalida(index)}
-                    className="mt-6"
+          {galeriaImagenes.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm text-gray-600">
+                Arrastra las imágenes para reordenarlas. El orden se mantendrá en la web pública.
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {galeriaImagenes.map((imagen, index) => (
+                  <div 
+                    key={index} 
+                    className="relative group cursor-move"
+                    draggable
+                    onDragStart={(e) => e.dataTransfer.setData('text/plain', index.toString())}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      const fromIndex = parseInt(e.dataTransfer.getData('text/plain'))
+                      moveImagen(fromIndex, index)
+                    }}
                   >
-                    Eliminar
-                  </Button>
-                )}
+                    <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
+                      <ImageIcon className="h-8 w-8 text-gray-400" />
+                    </div>
+                    <div className="absolute top-1 left-1 bg-black/70 text-white text-xs px-1 rounded">
+                      {index + 1}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => removeImagenGaleria(index)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* Inclusiones */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Inclusiones</h3>
-            <Button type="button" variant="outline" size="sm" onClick={addInclusion}>
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Inclusión
-            </Button>
-          </div>
-          
-          <div className="space-y-2">
-            {inclusiones.map((inclusion, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  placeholder="Ej: Alojamiento en hotel 4 estrellas"
-                  value={inclusion}
-                  onChange={(e) => updateInclusion(index, e.target.value)}
-                  required
-                />
-                {inclusiones.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeInclusion(index)}
-                  >
-                    Eliminar
-                  </Button>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
 
-        {/* Exclusiones */}
+
+        {/* Testimonios asociados */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Exclusiones</h3>
-            <Button type="button" variant="outline" size="sm" onClick={addExclusion}>
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Exclusión
-            </Button>
+            <h3 className="text-lg font-semibold">Testimonios Asociados</h3>
+            <span className="text-sm text-gray-500">
+              {testimoniosAsociados.length}/4 testimonios
+            </span>
           </div>
+          <p className="text-sm text-gray-600">
+            Selecciona hasta 4 testimonios existentes para mostrar en este destino
+          </p>
           
-          <div className="space-y-2">
-            {exclusiones.map((exclusion, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <Input
-                  placeholder="Ej: Vuelos internacionales"
-                  value={exclusion}
-                  onChange={(e) => updateExclusion(index, e.target.value)}
-                  required
-                />
-                {exclusiones.length > 1 && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => removeExclusion(index)}
-                  >
-                    Eliminar
-                  </Button>
-                )}
+          {/* Testimonios seleccionados */}
+          {testimoniosAsociados.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="font-medium text-sm">Testimonios seleccionados:</h4>
+              <div className="flex flex-wrap gap-2">
+                {testimoniosAsociados.map((testimonioId, index) => (
+                  <div key={testimonioId} className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-lg px-3 py-2">
+                    <span className="text-sm font-medium">Testimonio {index + 1}</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 w-6 p-0 text-purple-600 hover:text-purple-800"
+                      onClick={() => removeTestimonio(testimonioId)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+          )}
+          
+          {/* Lista de testimonios disponibles */}
+          <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg text-center">
+            <ImageIcon className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+            <p className="text-sm text-gray-500">
+              Los testimonios se cargarán desde la base de datos
+            </p>
+            {testimoniosAsociados.length >= 4 && (
+              <p className="text-sm text-orange-600 mt-2">
+                Límite de 4 testimonios alcanzado
+              </p>
+            )}
           </div>
         </div>
 
@@ -421,7 +426,7 @@ export function ViajeForm({ open, onOpenChange }: ViajeFormProps) {
             ) : (
               <>
                 <Save className="h-4 w-4 mr-2" />
-                Crear Viaje
+                Crear Destino
               </>
             )}
           </Button>

@@ -559,8 +559,8 @@ export default function TripDetailPage() {
                   </CardContent>
                 </Card>
 
-                {/* Itinerary */}
-                <Card>
+                {/* Itinerary - OCULTO TEMPORALMENTE */}
+                <Card className="hidden">
                   <CardContent className="p-6">
                     <h2 className="text-2xl font-bold mb-6 text-gray-900">Itinerario Detallado</h2>
                     <div className="space-y-6">
@@ -719,8 +719,8 @@ export default function TripDetailPage() {
                   </CardContent>
                 </Card>
 
-                {/* FAQs */}
-                <Card>
+                {/* FAQs - OCULTO TEMPORALMENTE */}
+                <Card className="hidden">
                   <CardContent className="p-6">
                     <h2 className="text-2xl font-bold mb-6 text-gray-900">Preguntas Frecuentes</h2>
                     <div className="space-y-6">

@@ -37,9 +37,9 @@ import {
   Search, 
   MoreHorizontal,
   Eye,
-  Check,
-  X,
-  Star
+  Star,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react'
 
 // Datos de ejemplo
@@ -50,9 +50,9 @@ const testimoniosEjemplo = [
     email: "maria@email.com",
     content: "Excelente experiencia en Bariloche. Todo muy bien organizado y los guías fueron fantásticos.",
     rating: 5,
-    status: "Aprobado",
     date: "2024-01-15",
-    location: "Buenos Aires, Argentina"
+    location: "Buenos Aires, Argentina",
+    destination: "Bariloche"
   },
   {
     id: 2,
@@ -60,9 +60,9 @@ const testimoniosEjemplo = [
     email: "carlos@email.com",
     content: "El viaje a Mendoza superó nuestras expectativas. Las bodegas fueron increíbles y el hotel excelente.",
     rating: 5,
-    status: "Pendiente",
     date: "2024-01-10",
-    location: "Córdoba, Argentina"
+    location: "Córdoba, Argentina",
+    destination: "Mendoza"
   },
   {
     id: 3,
@@ -70,15 +70,17 @@ const testimoniosEjemplo = [
     email: "ana@email.com",
     content: "Muy buena atención al cliente. Recomiendo totalmente los servicios de Zamorano Turismo.",
     rating: 4,
-    status: "Aprobado",
     date: "2024-01-08",
-    location: "Rosario, Argentina"
+    location: "Rosario, Argentina",
+    destination: "General"
   },
 ]
 
 export default function TestimoniosPage() {
   const [searchTerm, setSearchTerm] = useState('')
-  const [selectedStatus, setSelectedStatus] = useState('all')
+  const [selectedDestination, setSelectedDestination] = useState('all')
+  const [sortBy, setSortBy] = useState('date')
+  const [sortOrder, setSortOrder] = useState('desc')
   const [sheetOpen, setSheetOpen] = useState(false)
   const [loading, setLoading] = useState(true)
   const [testimonios, setTestimonios] = useState(testimoniosEjemplo)
@@ -105,22 +107,66 @@ export default function TestimoniosPage() {
   // Registrar para refresh automático
   useRefreshable('testimonios-list', fetchTestimonios)
 
-  const filteredTestimonios = testimonios.filter(testimonio => {
-    const matchesSearch = testimonio.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         testimonio.content.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = selectedStatus === 'all' || testimonio.status === selectedStatus
-    
-    return matchesSearch && matchesStatus
-  })
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Aprobado': return 'bg-green-100 text-green-800'
-      case 'Pendiente': return 'bg-yellow-100 text-yellow-800'
-      case 'Rechazado': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+  // Función para manejar el ordenamiento
+  const handleSort = (column: string) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')
+    } else {
+      setSortBy(column)
+      setSortOrder('asc')
     }
   }
+
+  // Función para obtener el icono de ordenamiento
+  const getSortIcon = (column: string) => {
+    if (sortBy !== column) {
+      return <ChevronUp className="h-4 w-4 opacity-30" />
+    }
+    return sortOrder === 'asc' ? 
+      <ChevronUp className="h-4 w-4" /> : 
+      <ChevronDown className="h-4 w-4" />
+  }
+
+  const filteredTestimonios = testimonios.filter(testimonio => {
+    const matchesSearch = testimonio.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         testimonio.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         testimonio.destination.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesDestination = selectedDestination === 'all' || testimonio.destination === selectedDestination
+    
+    return matchesSearch && matchesDestination
+  }).sort((a, b) => {
+    let aValue, bValue
+    
+    switch (sortBy) {
+      case 'date':
+        aValue = new Date(a.date).getTime()
+        bValue = new Date(b.date).getTime()
+        break
+      case 'rating':
+        aValue = a.rating
+        bValue = b.rating
+        break
+      case 'author':
+        aValue = a.author.toLowerCase()
+        bValue = b.author.toLowerCase()
+        break
+      case 'destination':
+        aValue = a.destination.toLowerCase()
+        bValue = b.destination.toLowerCase()
+        break
+      default:
+        aValue = new Date(a.date).getTime()
+        bValue = new Date(b.date).getTime()
+    }
+    
+    if (sortOrder === 'asc') {
+      return aValue > bValue ? 1 : -1
+    } else {
+      return aValue < bValue ? 1 : -1
+    }
+  })
+
+
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, index) => (
@@ -154,76 +200,52 @@ export default function TestimoniosPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <div className="flex items-center gap-4">
           <RefreshButton size="default" className="mt-1" />
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Gestión de Testimonios</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Gestión de Testimonios</h1>
+            <p className="text-muted-foreground text-sm sm:text-base">
               Revisa y aprueba los testimonios de los clientes
             </p>
           </div>
         </div>
-        <TestimonioForm open={sheetOpen} onOpenChange={setSheetOpen} />
+        <div className="flex-shrink-0">
+          <TestimonioForm open={sheetOpen} onOpenChange={setSheetOpen} />
+        </div>
       </div>
 
       {contentSkeleton ? contentSkeleton : (
       <>
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Testimonios</CardTitle>
-            <Star className="h-4 w-4 text-muted-foreground" />
+      <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+        <Card className="min-w-0">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2">
+            <CardTitle className="text-xs sm:text-sm font-medium truncate pr-1 sm:pr-2">
+              Total Testimonios
+            </CardTitle>
+            <div className="h-3 w-3 sm:h-4 sm:w-4 rounded-full bg-blue-400 flex-shrink-0" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{testimonios.length}</div>
-            <p className="text-xs text-muted-foreground">
-              +2 este mes
+          <CardContent className="pt-0 sm:pt-0">
+            <div className="text-lg sm:text-2xl font-bold">{testimonios.length}</div>
+            <p className="text-xs text-muted-foreground break-words hidden sm:block">
+              Testimonios publicados
             </p>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pendientes</CardTitle>
-            <div className="h-4 w-4 rounded-full bg-yellow-400" />
+        
+        <Card className="min-w-0">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-1 sm:pb-2">
+            <CardTitle className="text-xs sm:text-sm font-medium truncate pr-1 sm:pr-2">
+              Rating Promedio
+            </CardTitle>
+            <div className="h-3 w-3 sm:h-4 sm:w-4 rounded-full bg-yellow-400 flex-shrink-0" />
           </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {testimonios.filter(t => t.status === 'Pendiente').length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Requieren revisión
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Aprobados</CardTitle>
-            <div className="h-4 w-4 rounded-full bg-green-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {testimonios.filter(t => t.status === 'Aprobado').length}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Publicados
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Rating Promedio</CardTitle>
-            <Star className="h-4 w-4 text-yellow-400" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
+          <CardContent className="pt-0 sm:pt-0">
+            <div className="text-lg sm:text-2xl font-bold">
               {(testimonios.reduce((acc, t) => acc + t.rating, 0) / testimonios.length).toFixed(1)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground break-words hidden sm:block">
               De 5 estrellas
             </p>
           </CardContent>
@@ -252,15 +274,15 @@ export default function TestimoniosPage() {
               </div>
             </div>
             
-            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
+            <Select value={selectedDestination} onValueChange={setSelectedDestination}>
               <SelectTrigger className="w-full sm:w-48">
-                <SelectValue placeholder="Estado" />
+                <SelectValue placeholder="Destino" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos los estados</SelectItem>
-                <SelectItem value="Pendiente">Pendientes</SelectItem>
-                <SelectItem value="Aprobado">Aprobados</SelectItem>
-                <SelectItem value="Rechazado">Rechazados</SelectItem>
+                <SelectItem value="all">Todos los destinos</SelectItem>
+                <SelectItem value="Bariloche">Bariloche</SelectItem>
+                <SelectItem value="Mendoza">Mendoza</SelectItem>
+                <SelectItem value="General">General</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -276,78 +298,164 @@ export default function TestimoniosPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cliente</TableHead>
-                <TableHead>Testimonio</TableHead>
-                <TableHead>Rating</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Fecha</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredTestimonios.map((testimonio) => (
-                <TableRow key={testimonio.id}>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{testimonio.author}</div>
-                      <div className="text-sm text-muted-foreground">{testimonio.location}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="max-w-xs">
-                      <div className="text-sm line-clamp-2">
-                        {testimonio.content}
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      {renderStars(testimonio.rating)}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(testimonio.status)}>
-                      {testimonio.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="text-sm">
-                      {new Date(testimonio.date).toLocaleDateString()}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Abrir menú</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                          <Eye className="h-4 w-4 mr-2" />
-                          Ver detalles
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Check className="h-4 w-4 mr-2" />
-                          Aprobar
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
-                          <X className="h-4 w-4 mr-2" />
-                          Rechazar
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
+          {/* Desktop Table */}
+          <div className="hidden md:block">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                      onClick={() => handleSort('author')}
+                    >
+                      Cliente
+                      {getSortIcon('author')}
+                    </Button>
+                  </TableHead>
+                  <TableHead>Testimonio</TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                      onClick={() => handleSort('rating')}
+                    >
+                      Rating
+                      {getSortIcon('rating')}
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                      onClick={() => handleSort('destination')}
+                    >
+                      Destino
+                      {getSortIcon('destination')}
+                    </Button>
+                  </TableHead>
+                  <TableHead>
+                    <Button
+                      variant="ghost"
+                      className="h-auto p-0 font-semibold hover:bg-transparent"
+                      onClick={() => handleSort('date')}
+                    >
+                      Fecha
+                      {getSortIcon('date')}
+                    </Button>
+                  </TableHead>
+                  <TableHead className="text-right">Acciones</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredTestimonios.map((testimonio) => (
+                  <TableRow key={testimonio.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{testimonio.author}</div>
+                        <div className="text-sm text-muted-foreground">{testimonio.location}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="max-w-xs">
+                        <div className="text-sm line-clamp-2">
+                          {testimonio.content}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {renderStars(testimonio.rating)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">
+                        {testimonio.destination}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        {new Date(testimonio.date).toLocaleDateString()}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Abrir menú</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver detalles
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem>
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem className="text-destructive">
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Mobile Cards */}
+          <div className="md:hidden space-y-2">
+            {filteredTestimonios.map((testimonio) => (
+              <div key={testimonio.id} className="border rounded-lg p-2 space-y-1">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-xs">{testimonio.author}</h3>
+                    <p className="text-xs text-muted-foreground">{testimonio.location}</p>
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Abrir menú</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem>
+                        <Eye className="h-4 w-4 mr-2" />
+                        Ver detalles
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem>
+                        Editar
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="text-destructive">
+                        Eliminar
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                
+                <div className="text-xs text-muted-foreground line-clamp-1">
+                  {testimonio.content}
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1">
+                    {renderStars(testimonio.rating)}
+                  </div>
+                  <Badge variant="outline" className="text-xs px-1 py-0">
+                    {testimonio.destination}
+                  </Badge>
+                </div>
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
       </>

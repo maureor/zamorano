@@ -151,8 +151,8 @@ export default function ConfiguracionPage() {
       <div className="flex items-center gap-4">
         <RefreshButton size="default" className="mt-1" />
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Configuración</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Configuración</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">
             Administra la configuración general del sistema
           </p>
         </div>
@@ -161,22 +161,22 @@ export default function ConfiguracionPage() {
       {contentSkeleton ? contentSkeleton : (
       <>
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="general" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
+          <TabsTrigger value="general" className="flex items-center gap-2 text-xs sm:text-sm">
             <Settings className="h-4 w-4" />
-            General
+            <span className="hidden sm:inline">General</span>
           </TabsTrigger>
-          <TabsTrigger value="seo" className="flex items-center gap-2">
+          <TabsTrigger value="seo" className="flex items-center gap-2 text-xs sm:text-sm">
             <Globe className="h-4 w-4" />
-            SEO
+            <span className="hidden sm:inline">SEO</span>
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center gap-2">
+          <TabsTrigger value="notifications" className="flex items-center gap-2 text-xs sm:text-sm">
             <Bell className="h-4 w-4" />
-            Notificaciones
+            <span className="hidden sm:inline">Notificaciones</span>
           </TabsTrigger>
-          <TabsTrigger value="system" className="flex items-center gap-2">
+          <TabsTrigger value="system" className="flex items-center gap-2 text-xs sm:text-sm">
             <Database className="h-4 w-4" />
-            Sistema
+            <span className="hidden sm:inline">Sistema</span>
           </TabsTrigger>
         </TabsList>
 

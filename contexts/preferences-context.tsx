@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { 
   getUserPreferences, 
   saveUserPreferences, 
@@ -17,6 +17,10 @@ interface PreferencesContextType {
   toggleSidebar: () => void
   setSidebarCollapsed: (collapsed: boolean) => void
   sidebarCollapsed: boolean
+  isMobile: boolean
+  mobileSidebarOpen: boolean
+  setMobileSidebarOpen: (open: boolean) => void
+  toggleMobileSidebar: () => void
 }
 
 const PreferencesContext = createContext<PreferencesContextType | undefined>(undefined)
@@ -26,6 +30,10 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
   const [preferences, setPreferences] = useState<UserPreferences>({
     sidebar: { collapsed: false }
   })
+  
+  // Estados para mobile
+  const [isMobile, setIsMobile] = useState(false)
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   // Solo cargar preferencias en el cliente después de la hidratación
   useEffect(() => {
@@ -36,6 +44,18 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     }, 0)
 
     return () => clearTimeout(timer)
+  }, [])
+
+  // Detectar si es mobile
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768) // md breakpoint
+    }
+    
+    checkIsMobile()
+    window.addEventListener('resize', checkIsMobile)
+    
+    return () => window.removeEventListener('resize', checkIsMobile)
   }, [])
 
   // Función para actualizar una preferencia específica
@@ -87,6 +107,11 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     })
   }, [])
 
+  // Función para toggle del sidebar móvil
+  const toggleMobileSidebar = useCallback(() => {
+    setMobileSidebarOpen(prev => !prev)
+  }, [])
+
   // Memoizar el valor del contexto para evitar re-renders infinitos
   const value: PreferencesContextType = React.useMemo(() => ({
     preferences,
@@ -95,8 +120,12 @@ export function PreferencesProvider({ children }: { children: React.ReactNode })
     resetPreferences,
     toggleSidebar,
     setSidebarCollapsed,
-    sidebarCollapsed: preferences.sidebar.collapsed
-  }), [preferences, updatePreference, updatePreferences, resetPreferences, toggleSidebar, setSidebarCollapsed])
+    sidebarCollapsed: preferences.sidebar.collapsed,
+    isMobile,
+    mobileSidebarOpen,
+    setMobileSidebarOpen,
+    toggleMobileSidebar
+  }), [preferences, updatePreference, updatePreferences, resetPreferences, toggleSidebar, setSidebarCollapsed, isMobile, mobileSidebarOpen, toggleMobileSidebar])
 
   return (
     <PreferencesContext.Provider value={value}>
